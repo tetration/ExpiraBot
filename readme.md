@@ -82,6 +82,97 @@ This will run the script every day at **8:00 AM**.
 
 ---
 
+### **🔹 Automating the Script on Windows using Task Scheduler**  
+
+To run the **SSL Certificate Expiry Checker** automatically on Windows, use **Task Scheduler** to execute it at a fixed interval (e.g., daily at 8:00 AM).  
+
+---
+
+### **🛠 Step 1: Ensure Python is Installed**  
+1. Open **Command Prompt (cmd)** and type:  
+   ```sh
+   python --version
+   ```
+   If Python is installed, it will show the version number.  
+   
+2. If Python is not installed, [download and install it](https://www.python.org/).  
+   - During installation, check the box **“Add Python to PATH”**.  
+
+---
+
+### **📍 Step 2: Find the Python and Script Paths**  
+You'll need two important file paths:  
+
+1. **Python Executable Path**  
+   - Run the following command in **Command Prompt**:  
+     ```sh
+     where python
+     ```
+   - Example output:  
+     ```
+     C:\Users\YourUser\AppData\Local\Programs\Python\Python39\python.exe
+     ```
+   - Copy this **Python path**.
+
+2. **Script File Path**  
+   - Locate the `ssl_cert_checker.py` script.  
+   - Right-click the file → **Properties** → Copy the **full path** (e.g., `C:\Users\YourUser\ssl_cert_checker.py`).  
+
+---
+
+### **📅 Step 3: Create a Scheduled Task**  
+
+1. Press `Win + R`, type **`taskschd.msc`**, and press `Enter`.  
+2. Click **“Create Basic Task”**.  
+3. **Name the task**:  
+   - Example: `SSL Certificate Expiry Checker`.  
+4. **Set the Trigger**:  
+   - Choose **“Daily”** and set the time (e.g., `08:00 AM`).  
+
+---
+
+### **⚡ Step 4: Configure the Action**  
+
+1. Choose **"Start a Program"** → Click **Next**.  
+2. **Program/script**:  
+   - Paste the **Python executable path** (e.g., `C:\Users\YourUser\AppData\Local\Programs\Python\Python39\python.exe`).  
+3. **Add arguments (optional)**:  
+   - Add the script path in quotes. Example:  
+     ```
+     "C:\Users\YourUser\ssl_cert_checker.py"
+     ```
+4. Click **Next** → **Finish**.
+
+---
+
+### **✅ Step 5: Test the Task**  
+
+1. Open **Task Scheduler**.  
+2. Find the task under **Task Scheduler Library**.  
+3. Right-click → **Run**.  
+4. Check the `logs/` folder for a new log file (e.g., `2025_03_04__08_00.log`).  
+
+---
+
+### **🔧 Troubleshooting**  
+| Issue | Solution |
+|--------|----------|
+| **Script doesn’t run** | Ensure Python is installed and the `.env` file is correctly configured. |
+| **Email not sent** | Check SMTP settings and enable App Passwords for Gmail. |
+| **Permissions error** | Run Task Scheduler as **Administrator**. |
+
+---
+
+### **🗑 How to Edit or Delete the Task**  
+- To **edit**: Open Task Scheduler → Right-click task → **Properties** → Modify settings.  
+- To **delete**: Right-click the task → **Delete**.  
+
+---
+
+The script will now **run automatically at the scheduled time** to monitor SSL certificate expirations and send alerts. 🚀
+
+---
+
 ## **Contributing**  
 1. Fork the repository.  
 2. Create a new branch: `git checkout -b feature-name`.  
