@@ -18,23 +18,33 @@ from email.mime.multipart import MIMEMultipart
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
-# Create the directory to store logs if it doesn't exist already
-if not os.path.exists('logs'):
-    os.mkdir('logs')
-# Configure logging
+
+# Get the absolute path of the script's directory
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))  # Ensures script's own directory is used. This is useful when running the script through bat scripts that change environment paths on windows
+LOG_DIR = os.path.join(SCRIPT_DIR, "logs")  # Logs folder inside script directory
+ENV_FILE_PATH = os.path.join(SCRIPT_DIR, ".env")  # Store .env in the script folder
+
+# Ensure the logs directory exists
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
+# Configure logging to store logs inside the script's directory
+log_filename = os.path.join(LOG_DIR, f"{time.strftime('%Y_%m_%d__%H_%M', time.localtime(time.time()))}.log")
+
 logging.basicConfig(
     level=logging.DEBUG if os.getenv('LOG') == '1' else logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(f"logs/{time.strftime('%Y_%m_%d__%H_%M', time.localtime(time.time()))}.log"),
-        logging.StreamHandler()
+        logging.FileHandler(log_filename),  # Save logs in the correct folder
+        logging.StreamHandler()  # Also output logs to console
     ]
 )
 
-logger = logging.getLogger() # Starts logging everything
+logger = logging.getLogger()
+logger.info(f"Logging initialized. Logs will be saved in: {log_filename}")
 
 # Function to check and create .env.example file without sensitive information
-def check_and_create_env_file(file_path='.env'):
+def check_and_create_env_file(file_path=ENV_FILE_PATH):
     if not os.path.exists(file_path):
         logger.warning("No .env.example file found! Generating one...")
         with open(file_path, "w") as env_file:
@@ -70,7 +80,7 @@ def check_and_create_env_file(file_path='.env'):
         logger.warning(f"{file_path} already exists. Skipping creation.")
 
 # Load the .env file
-def load_environment_variables(file_path='.env'):
+def load_environment_variables(file_path=ENV_FILE_PATH):
     check_and_create_env_file(file_path)
     load_dotenv(file_path)
     logger.info(f"Environment variables succesfully loaded from {file_path}.")
